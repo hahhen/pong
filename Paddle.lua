@@ -6,6 +6,7 @@ function Paddle:init(x, y, width, height)
     self.width = width
     self.height = height
     self.dy = 0
+    self.sprite = love.graphics.newImage('sprites/paddle_l.png')
 end
 
 function Paddle:update(dt)
@@ -17,5 +18,5 @@ function Paddle:update(dt)
 end
 
 function Paddle:render()
-    love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
+    love.graphics.draw(self.sprite, self.x, self.y)
 end
