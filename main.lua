@@ -10,10 +10,6 @@ local anim8 = require 'anim8'
 
 local image, animation
 
-function love.update(dt)  end
-
-function love.draw() animation:draw(image, 100, 200) end
-
 WINDOW_HEIGHT = 720
 WINDOW_WIDTH = 1280
 
@@ -23,9 +19,9 @@ VIRTUAL_WIDTH = 432
 PADDLE_SPEED = 200
 
 function love.load()
-    image = love.graphics.newImage('path/to/image.png')
-    local g = anim8.newGrid(32, 32, image:getWidth(), image:getHeight())
-    animation = anim8.newAnimation(g('1-8', 1), 0.1)
+    image = love.graphics.newImage('sprites/background.png')
+    local g = anim8.newGrid(432, 243, image:getWidth(), image:getHeight())
+    animation = anim8.newAnimation(g('1-2', 1), 0.1)
 
     love.window.setTitle('Pong')
 
@@ -191,7 +187,7 @@ end
 function love.draw()
     push:apply('start')
 
-    love.graphics.clear(40 / 255, 45 / 255, 52 / 255, 255 / 255)
+    animation:draw(image, 0, 0)
 
     love.graphics.setFont(smallFont)
 
@@ -223,6 +219,7 @@ function love.draw()
     ball:render()
 
     displayFPS()
+    copyright()
 
     push:apply('end')
 end
@@ -231,6 +228,12 @@ function displayFPS()
     love.graphics.setFont(smallFont)
     love.graphics.setColor(0, 255 / 255, 0, 255 / 255)
     love.graphics.print('FPS: ' .. tostring(love.timer.getFPS()), 10, 10)
+end
+
+function copyright()
+    love.graphics.setFont(smallFont)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.print('CATAOC, 2024', 50, 10)
 end
 
 function displayScore()
