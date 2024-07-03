@@ -7,6 +7,7 @@ function Ball:init(x, y, width, height)
     self.height = height
     self.dy = math.random(2) == 1 and -100 or 100
     self.dx = math.random(-100, 100)
+    self.sprite = love.graphics.newImage('sprites/ball.png')
 end
 
 function Ball:reset()
@@ -34,5 +35,5 @@ function Ball:collides(paddle)
 end
 
 function Ball:render()
-    love.graphics.rectangle('fill', self.x, self.y, self.width, self.height)
+    love.graphics.draw(self.sprite, self.x, self.y)
 end

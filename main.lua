@@ -6,6 +6,14 @@ require 'Paddle'
 
 require 'Ball'
 
+local anim8 = require 'anim8'
+
+local image, animation
+
+function love.update(dt)  end
+
+function love.draw() animation:draw(image, 100, 200) end
+
 WINDOW_HEIGHT = 720
 WINDOW_WIDTH = 1280
 
@@ -15,6 +23,10 @@ VIRTUAL_WIDTH = 432
 PADDLE_SPEED = 200
 
 function love.load()
+    image = love.graphics.newImage('path/to/image.png')
+    local g = anim8.newGrid(32, 32, image:getWidth(), image:getHeight())
+    animation = anim8.newAnimation(g('1-8', 1), 0.1)
+
     love.window.setTitle('Pong')
 
     love.graphics.setDefaultFilter('nearest', 'nearest')
@@ -30,15 +42,17 @@ function love.load()
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT,
                      {fullscreen = false, resizable = true, vsync = true})
 
-    player1 = Paddle(10, 30, 5, 20)
-    player2 = Paddle(VIRTUAL_WIDTH - 10, VIRTUAL_HEIGHT - 30, 5, 20)
+    player1 = Paddle(60, 35, 5, 35,
+                     love.graphics.newImage('sprites/paddle_l.png'), -70)
+    player2 = Paddle(VIRTUAL_WIDTH - 60, VIRTUAL_HEIGHT - 30, 5, 35,
+                     love.graphics.newImage('sprites/paddle_r.png'), 0)
 
     servingPlayer = 1
 
     player1Score = 0
     player2Score = 0
 
-    ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 4, 4)
+    ball = Ball(VIRTUAL_WIDTH / 2 - 2, VIRTUAL_HEIGHT / 2 - 2, 10, 10)
 
     sounds = {
         ['paddle_hit'] = love.audio.newSource('sounds/paddle_hit.wav', 'static'),
@@ -50,6 +64,8 @@ function love.load()
 end
 
 function love.update(dt)
+    animation:update(dt)
+
     -- player1
     if love.keyboard.isDown('w') then
         player1.dy = -PADDLE_SPEED
@@ -89,7 +105,7 @@ function love.update(dt)
         end
         if ball:collides(player2) then
             ball.dx = -ball.dx * 1.03
-            ball.x = player2.x - 4
+            ball.x = player2.x - 11
 
             if ball.dy < 0 then
                 ball.dy = -math.random(10, 150)
@@ -105,8 +121,8 @@ function love.update(dt)
             sounds['wall_hit']:play()
         end
 
-        if ball.y >= VIRTUAL_HEIGHT - 4 then
-            ball.y = VIRTUAL_HEIGHT - 4
+        if ball.y >= VIRTUAL_HEIGHT - 10 then
+            ball.y = VIRTUAL_HEIGHT - 10
             ball.dy = -ball.dy
             sounds['wall_hit']:play()
         end
@@ -124,12 +140,12 @@ function love.update(dt)
                 ball:reset()
             end
         end
-    
+
         if ball.x > VIRTUAL_WIDTH then
             servingPlayer = 2
             player1Score = player1Score + 1
             sounds['score']:play()
-            
+
             if player1Score == 10 then
                 winningPlayer = 1
                 gameState = 'done'
@@ -225,6 +241,4 @@ function displayScore()
                         VIRTUAL_HEIGHT / 3)
 end
 
-function love.resize(w, h)
-    push:resize(w, h)
-end
+function love.resize(w, h) push:resize(w, h) end
